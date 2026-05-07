@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
+/* 1. CONFIGURATION DES COULEURS GLOBALES (Full Dark pour Neon Strike) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
+  /* On définit le violet néon en variable pour pouvoir le réutiliser partout */
+  --neon-purple: #7c3aed;
+  --neon-purple-hover: #a78bfa;
 }
 
+/* 2. THÈME TAILWIND */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* On utilise Inter ou Arial comme défini dans ton Layout */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 3. STYLES DE BASE DU CORPS */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 4. PERSONNALISATION DE LA SCROLLBAR (Style Gaming) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon-purple);
+  border-radius: 10px;
+  /* Ajoute un petit effet de bordure pour détacher la barre */
+  border: 2px solid #000000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-purple-hover);
+}
+
+/* 5. SÉLECTION DE TEXTE (Détail Master ESITH) */
+::selection {
+  background-color: rgba(124, 58, 237, 0.3);
+  color: #ffffff;
+}
+
+/* Force la visibilité des textes importants sur le fond noir */
+.text-white, 
+h1, h2, h3, 
+span.text-white {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Assure que le total ressort bien */
+.font-black {
+  color: #ffffff !important;
 }

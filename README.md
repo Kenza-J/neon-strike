@@ -34,3 +34,124 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+```
+neon-strike
+├─ app
+│  ├─ cart
+│  │  └─ page.tsx
+│  ├─ category
+│  │  └─ [slug]
+│  │     └─ page.tsx
+│  ├─ checkout
+│  │  └─ page.tsx
+│  ├─ contact
+│  │  └─ page.tsx
+│  ├─ favicon.ico
+│  ├─ globals.css
+│  ├─ layout.tsx
+│  ├─ page.tsx
+│  ├─ products
+│  │  ├─ page.tsx
+│  │  └─ [id]
+│  │     └─ page.tsx
+│  └─ success
+│     └─ page.tsx
+├─ components
+│  ├─ Footer.tsx
+│  ├─ Hero.tsx
+│  ├─ Navbar.tsx
+│  └─ ProductCard.tsx
+├─ context
+│  └─ CartContext.tsx
+├─ data
+│  └─ products.ts
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ public
+│  ├─ arm.jpg
+│  ├─ console.jpg
+│  ├─ earbuds.jpg
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ headset.jpg
+│  ├─ hero-bg.jpg
+│  ├─ hero-video.mp4
+│  ├─ keyboard.jpg
+│  ├─ mic.jpg
+│  ├─ mouse.jpg
+│  ├─ mousepad.jpg
+│  ├─ next.svg
+│  ├─ retro.jpg
+│  ├─ soundbar.jpg
+│  ├─ studio.jpg
+│  ├─ vercel.svg
+│  ├─ vr.jpg
+│  └─ window.svg
+├─ README.md
+└─ tsconfig.json
+
+```
+```
+neon-strike
+├─ app
+│  ├─ cart
+│  │  └─ page.tsx
+│  ├─ category
+│  │  └─ [slug]
+│  │     └─ page.tsx
+│  ├─ checkout
+│  │  └─ page.tsx
+│  ├─ contact
+│  │  └─ page.tsx
+│  ├─ favicon.ico
+│  ├─ globals.css
+│  ├─ layout.tsx
+│  ├─ page.tsx
+│  ├─ products
+│  │  ├─ page.tsx
+│  │  └─ [id]
+│  │     └─ page.tsx
+│  └─ success
+│     └─ page.tsx
+├─ components
+│  ├─ Footer.tsx
+│  ├─ Hero.tsx
+│  ├─ Navbar.tsx
+│  └─ ProductCard.tsx
+├─ context
+│  └─ CartContext.tsx
+├─ data
+│  └─ products.ts
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ public
+│  ├─ arm.jpg
+│  ├─ console.jpg
+│  ├─ earbuds.jpg
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ headset.jpg
+│  ├─ hero-bg.jpg
+│  ├─ hero-video.mp4
+│  ├─ keyboard.jpg
+│  ├─ mic.jpg
+│  ├─ mouse.jpg
+│  ├─ mousepad.jpg
+│  ├─ next.svg
+│  ├─ retro.jpg
+│  ├─ soundbar.jpg
+│  ├─ studio.jpg
+│  ├─ vercel.svg
+│  ├─ vr.jpg
+│  └─ window.svg
+├─ README.md
+└─ tsconfig.json
+
+```

@@ -1,0 +1,8 @@
+{
+    "ProjectTree.ignoreFolders": [
+        "node_modules",
+        ".git",
+        ".vscode",
+        ".vercel"
+    ]
+}
