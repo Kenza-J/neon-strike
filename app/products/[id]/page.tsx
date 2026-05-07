@@ -2,12 +2,11 @@
 
 import { products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
-import { notFound } from "next/navigation";
 import { ShoppingCart, CheckCircle2, CreditCard, ShieldCheck, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { trackViewItem } from "@/lib/analytics"; // ✅ GA4 tracking
-import { plausibleViewItem } from "@/lib/plausible"; // ✅ Plausible tracking
+import { trackViewItem, trackAddToCart } from "@/lib/analytics"; // ✅ GA4
+import { plausibleViewItem, plausibleAddToCart } from "@/lib/plausible"; // ✅ Plausible
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { addToCart } = useCart();
@@ -19,8 +18,8 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   // ✅ view_item — déclenché au chargement de la fiche produit
   useEffect(() => {
     if (product) {
-      trackViewItem(product);                              // GA4
-      plausibleViewItem(product.name, product.category);  // Plausible
+      trackViewItem(product);
+      plausibleViewItem(product.name, product.category);
     }
   }, [product]);
 
@@ -78,8 +77,13 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </div>
             </div>
 
+            {/* ✅ BOUTON avec trackAddToCart */}
             <button
-              onClick={() => addToCart(product)}
+              onClick={() => {
+                trackAddToCart(product, 1);         // ✅ GA4 add_to_cart
+                plausibleAddToCart(product.name, product.price); // ✅ Plausible
+                addToCart(product);                  // Ajout réel au panier
+              }}
               className="w-full bg-white text-black hover:bg-purple-600 hover:text-white py-6 rounded-2xl font-black text-xl flex items-center justify-center gap-4 transition-all active:scale-95 shadow-2xl"
             >
               <ShoppingCart size={24} /> AJOUTER AU PANIER
