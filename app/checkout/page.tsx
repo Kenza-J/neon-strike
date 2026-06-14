@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { ShieldCheck, CreditCard, ArrowLeft, Lock } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 import {
   Elements,
@@ -15,14 +17,10 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-/* =========================
-   STRIPE INIT
-========================= */
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
-/* Style commun pour chaque champ Stripe */
 const stripeElementStyle = {
   style: {
     base: {
@@ -35,9 +33,6 @@ const stripeElementStyle = {
   },
 };
 
-/* =========================
-   STRIPE FORM COMPONENT
-========================= */
 function CheckoutForm({
   totalPrice,
   clearCart,
@@ -61,8 +56,6 @@ function CheckoutForm({
     setLoading(true);
     setErrorMessage("");
 
-    // 1. Appeler le backend pour créer le PaymentIntent
-    // 🔥 On envoie aussi le nom et téléphone pour les métadonnées Stripe
     const res = await fetch("/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -81,7 +74,6 @@ function CheckoutForm({
       return;
     }
 
-    // 2. Confirmer le paiement avec la carte
     const cardNumber = elements.getElement(CardNumberElement);
     if (!cardNumber) return;
 
@@ -89,12 +81,9 @@ function CheckoutForm({
       payment_method: { card: cardNumber },
     });
 
-    // 3. Résultat
     if (result.error) {
-      // ❌ Affiche l'erreur Stripe (carte refusée, fonds insuffisants...)
       setErrorMessage(result.error.message || "Erreur de paiement.");
     } else {
-      // ✅ Paiement réussi → redirection vers /success avec l'ID Stripe
       clearCart();
       const paymentIntentId = result.paymentIntent?.id || "";
       window.location.href = `/success?payment_intent=${paymentIntentId}`;
@@ -105,23 +94,16 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-
-      {/* Numéro de carte */}
       <div>
-        <label className="text-xs text-gray-400 mb-1 block">
-          Numéro de carte
-        </label>
+        <label className="text-xs text-gray-400 mb-1 block">Numéro de carte</label>
         <div className="p-4 bg-[#1a1a1a] border border-white/10 rounded-xl">
           <CardNumberElement options={stripeElementStyle} />
         </div>
       </div>
 
-      {/* Date + CVC côte à côte */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-gray-400 mb-1 block">
-            Date d'expiration
-          </label>
+          <label className="text-xs text-gray-400 mb-1 block">Date d'expiration</label>
           <div className="p-4 bg-[#1a1a1a] border border-white/10 rounded-xl">
             <CardExpiryElement options={stripeElementStyle} />
           </div>
@@ -134,14 +116,12 @@ function CheckoutForm({
         </div>
       </div>
 
-      {/* Message d'erreur carte refusée */}
       {errorMessage && (
         <p className="text-red-500 text-sm bg-red-500/10 p-3 rounded-lg">
           ⚠️ {errorMessage}
         </p>
       )}
 
-      {/* Bouton payer */}
       <button
         type="submit"
         disabled={!stripe || loading}
@@ -150,16 +130,21 @@ function CheckoutForm({
         <Lock size={16} />
         {loading ? "Traitement en cours..." : `Payer ${totalPrice} MAD`}
       </button>
-
     </form>
   );
 }
 
-/* =========================
-   PAGE PRINCIPALE
-========================= */
 export default function CommanderPage() {
   const { cart, totalPrice, clearCart } = useCart();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // ✅ Protection de la route — redirige vers login si non connecté
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
+    }
+  }, [status, router]);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -168,12 +153,19 @@ export default function CommanderPage() {
 
   const isFormValid = name !== "" && phone !== "" && address !== "";
 
+  // Afficher loading pendant la vérification de session
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-gray-400">Chargement...</p>
+      </div>
+    );
+  }
+
   if (cart.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-white">
-        <p className="mb-4 text-gray-500">
-          Votre panier est vide pour passer une commande.
-        </p>
+        <p className="mb-4 text-gray-500">Votre panier est vide pour passer une commande.</p>
         <Link href="/products" className="text-purple-500 font-bold">
           Retour au catalogue
         </Link>
@@ -185,19 +177,21 @@ export default function CommanderPage() {
     <div className="min-h-screen bg-black text-white py-20 px-6">
       <div className="max-w-7xl mx-auto">
 
-        {/* Retour */}
-        <Link
-          href="/cart"
-          className="inline-flex items-center gap-2 text-gray-500 hover:text-white transition mb-10"
-        >
+        <Link href="/cart" className="inline-flex items-center gap-2 text-gray-500 hover:text-white transition mb-10">
           <ArrowLeft size={16} /> Retour au panier
         </Link>
 
         <h1 className="text-4xl font-black mb-10">Checkout</h1>
 
+        {/* ✅ Message de bienvenue si connecté */}
+        {session && (
+          <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm">
+            ✅ Connecté en tant que <strong>{session.user?.name}</strong>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-2 gap-16">
 
-          {/* FORMULAIRE INFO */}
           <div className="space-y-4">
             <h2 className="font-bold text-lg mb-2">Informations de livraison</h2>
 
@@ -238,9 +232,7 @@ export default function CommanderPage() {
             </div>
           </div>
 
-          {/* RÉSUMÉ + STRIPE */}
           <div className="bg-[#0f0f10] border border-white/5 p-6 rounded-2xl space-y-6">
-
             <div>
               <h2 className="font-bold text-lg mb-4">Résumé de la commande</h2>
               {cart.map((item: any) => (
@@ -255,7 +247,6 @@ export default function CommanderPage() {
               </div>
             </div>
 
-            {/* STRIPE */}
             <div>
               <h2 className="font-bold text-lg mb-4">Paiement</h2>
               <Elements stripe={stripePromise}>
@@ -278,7 +269,6 @@ export default function CommanderPage() {
               <ShieldCheck size={14} />
               Vos données sont chiffrées et sécurisées
             </div>
-
           </div>
 
         </div>
