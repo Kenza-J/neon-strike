@@ -7,12 +7,12 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { trackViewItem, trackAddToCart } from "@/lib/analytics";
 import { plausibleViewItem, plausibleAddToCart } from "@/lib/plausible";
+import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductClient({ productId }: { productId: string }) {
   const { addToCart } = useCart();
   const product = products.find((p) => p.id === productId);
 
-  // ✅ view_item — déclenché au chargement de la fiche produit
   useEffect(() => {
     if (product) {
       trackViewItem(product);
@@ -34,7 +34,7 @@ export default function ProductClient({ productId }: { productId: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-6">
+    <div className="bg-black text-white py-12 px-6">
       <div className="max-w-7xl mx-auto">
         <Link href="/products" className="inline-flex items-center gap-2 text-gray-500 hover:text-purple-500 mb-10 transition font-bold uppercase text-[10px] tracking-widest">
           <ArrowLeft size={16} /> Retour au catalogue
@@ -64,9 +64,10 @@ export default function ProductClient({ productId }: { productId: string }) {
 
             {/* RÉASSURANCE */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+              {/* ✅ Paiement Stripe */}
               <div className="flex items-center gap-3 p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
                 <CreditCard className="text-green-500" size={20} />
-                <span className="text-[10px] font-black uppercase text-green-500">Paiement Cash à la livraison</span>
+                <span className="text-[10px] font-black uppercase text-green-500">Paiement sécurisé par Stripe</span>
               </div>
               <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20">
                 <ShieldCheck className="text-blue-500" size={20} />
@@ -74,19 +75,23 @@ export default function ProductClient({ productId }: { productId: string }) {
               </div>
             </div>
 
-            {/* ✅ BOUTON avec trackAddToCart */}
+            {/* ✅ BOUTON violet visible */}
             <button
               onClick={() => {
                 trackAddToCart(product, 1);
                 plausibleAddToCart(product.name, product.price);
                 addToCart(product);
               }}
-              className="w-full bg-white text-black hover:bg-purple-600 hover:text-white py-6 rounded-2xl font-black text-xl flex items-center justify-center gap-4 transition-all active:scale-95 shadow-2xl"
+              className="w-full bg-purple-600 text-white hover:bg-purple-700 py-6 rounded-2xl font-black text-xl flex items-center justify-center gap-4 transition-all active:scale-95 shadow-2xl"
             >
               <ShoppingCart size={24} /> AJOUTER AU PANIER
             </button>
           </div>
         </div>
+
+        {/* ✅ SECTION AVIS PRODUITS */}
+        <ProductReviews productId={productId} />
+
       </div>
     </div>
   );

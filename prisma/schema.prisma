@@ -19,6 +19,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
+  reviews       Review[]
 }
 
 model Account {
@@ -61,6 +62,16 @@ model Order {
   items     String
   total     Float
   status    String   @default("pending")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int
+  comment   String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
 }
