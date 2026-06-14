@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Zap, Menu, X, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import SearchBar from "@/components/SearchBar"; // ✅ Barre de recherche
 
 export default function Navbar() {
   const { cart } = useCart();
@@ -15,10 +16,10 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-[100] w-full border-b border-white/5 bg-black/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
 
         {/* LOGO */}
-        <Link href="/" className="flex items-center gap-2 text-2xl font-black tracking-tighter group">
+        <Link href="/" className="flex items-center gap-2 text-2xl font-black tracking-tighter group shrink-0">
           <div className="bg-purple-600 p-1.5 rounded-lg group-hover:bg-purple-500 transition-colors">
             <Zap size={20} fill="white" className="text-white" />
           </div>
@@ -26,7 +27,7 @@ export default function Navbar() {
         </Link>
 
         {/* LINKS (Desktop) */}
-        <div className="hidden md:flex items-center gap-10 text-sm font-bold uppercase tracking-widest text-gray-400">
+        <div className="hidden lg:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-gray-400">
           <Link href="/products" className="hover:text-white transition-colors">Boutique</Link>
           <Link href="/category/accessories" className="hover:text-white transition-colors">Accessoires</Link>
           <Link href="/category/audio" className="hover:text-white transition-colors">Audio</Link>
@@ -34,10 +35,15 @@ export default function Navbar() {
           <Link href="/contact" className="hover:text-white transition-colors">Support</Link>
         </div>
 
-        {/* CART & AUTH */}
-        <div className="flex items-center gap-3">
+        {/* ✅ SEARCH BAR */}
+        <div className="hidden md:block flex-1 max-w-xs">
+          <SearchBar />
+        </div>
 
-          {/* ✅ Auth buttons */}
+        {/* CART & AUTH */}
+        <div className="flex items-center gap-3 shrink-0">
+
+          {/* Auth buttons */}
           {session ? (
             <div className="hidden md:flex items-center gap-3">
               <Link
@@ -91,6 +97,10 @@ export default function Navbar() {
       {/* MOBILE MENU */}
       {isOpen && (
         <div className="md:hidden bg-black border-b border-white/10 p-6 flex flex-col gap-6 text-center font-bold uppercase tracking-widest text-gray-400">
+          {/* ✅ Search sur mobile */}
+          <div className="w-full">
+            <SearchBar />
+          </div>
           <Link href="/products" onClick={() => setIsOpen(false)} className="hover:text-white">Boutique</Link>
           <Link href="/category/accessories" onClick={() => setIsOpen(false)} className="hover:text-white">Accessoires</Link>
           <Link href="/category/audio" onClick={() => setIsOpen(false)} className="hover:text-white">Audio</Link>
